@@ -1,154 +1,133 @@
 import cv2
 import numpy as np
-from pathlib import Path
 from class_proccesors.object_predictor import ObjectPredictor
-from class_proccesors.object_tracker import ObjectTracker
-from mesh_proccesors.shape_classifier import infer_shape_type
-from mesh_proccesors.shape_fitter import SymmetricShapeFitter
-from mesh_proccesors.mesh_factory import save_obj
-from helpers.helper_fuctions import (
-    draw_detections,
-    draw_mask_overlay,
-    draw_shape_fit,
-    plot_closeups,
-)
-from helpers.wireframe_render import (
-    generate_mesh_from_fit,
-    draw_mesh_wireframe,
-    MeshRenderProcessor,
-)
+from helpers.helper_fuctions import draw_detections, draw_mask_overlay
+from helpers.cad_sketch_render import render_mesh_overlay, render_debug_overlay
+from mesh_proccesors.mesh_factory import MeshFactory, MeshData
+from mesh_proccesors.mesh_tracker import MeshTracker
 
 
-class Proccessor:
-    def __init__(
-        self,
-        predictor,
-        tracker=None,
-        shape_fitter=None,
-        render_mesh=False,
-        render_every=30,
-        mesh_out_dir="outputs/meshes",
-        render_out_dir="outputs/renders",
-    ):
+class Processor:
+    def __init__(self, predictor: ObjectPredictor, tracker: MeshTracker = None):
         self.predictor = predictor
-        self.tracker = tracker
-        self.shape_fitter = shape_fitter or SymmetricShapeFitter()
-
-        self.render_mesh = bool(render_mesh)
-        self.render_every = int(render_every)
-        self.mesh_out_dir = Path(mesh_out_dir)
-        self.render_out_dir = Path(render_out_dir)
-        self.mesh_out_dir.mkdir(parents=True, exist_ok=True)
-        if self.render_mesh:
-            self.mesh_renderer = MeshRenderProcessor(out_dir=self.render_out_dir)
-        else:
-            self.mesh_renderer = None
+        self.tracker = tracker or MeshTracker()
+        self.mesh_factory = MeshFactory()
 
     @staticmethod
-    def _shift_mask(mask, dx, dy, shape):
+    def _shift_mask(mask, dx, dy, frame_shape):
+        """
+        Shift a mask by (dx, dy) pixels without wrap-around.
+        New areas are filled with 0.
+        """
         if mask is None:
             return None
-        h, w = shape[:2]
-        m = np.roll(mask, (int(dy), int(dx)), axis=(0, 1))
-        return cv2.resize(m, (w, h), interpolation=cv2.INTER_NEAREST)
 
-    def _export_and_render_mesh(self, det, frame_idx: int):
-        if not self.render_mesh:
+        h, w = frame_shape[:2]
+        m = np.asarray(mask)
+        if m.ndim > 2:
+            m = np.squeeze(m)
+        if m.ndim != 2:
+            return None
+
+        # ensure uint8 binary
+        m = (m > 0).astype(np.uint8) * 255
+
+        M = np.array([[1.0, 0.0, float(dx)],
+                      [0.0, 1.0, float(dy)]], dtype=np.float32)
+
+        shifted = cv2.warpAffine(
+            m, M, (w, h),
+            flags=cv2.INTER_NEAREST,
+            borderMode=cv2.BORDER_CONSTANT,
+            borderValue=0,
+        )
+        return shifted
+
+    @staticmethod
+    def _ensure_mask_frame_size(mask, frame_shape):
+        if mask is None:
+            return None
+        h, w = frame_shape[:2]
+        m = np.asarray(mask)
+        if m.ndim > 2:
+            m = np.squeeze(m)
+        if m.ndim != 2:
+            return None
+        if m.shape[:2] != (h, w):
+            m = cv2.resize(m.astype(np.uint8), (w, h), interpolation=cv2.INTER_NEAREST)
+        return m
+
+    def proccess_path(self, path):
+        cap = cv2.VideoCapture(path)
+        if not cap.isOpened():
+            raise RuntimeError(f"Failed to open video: {path}")
+        return cap
+
+    def handle_mesh_tracking(self, prev_frame, frame, prev_meshes, conf_threshold):
+        """Track meshes using similarity transform."""
+        return self.tracker.track(prev_frame, frame, prev_meshes, conf_threshold)
+
+    def handle_drawing(self, frame, meshes):
+        vis = frame.copy()
+
+        # Render all tracked meshes
+        if meshes:
+            for mesh_data in meshes:
+                vis = render_mesh_overlay(vis, mesh_data)
+                render_debug_overlay(vis, mesh_data)
+            cv2.imshow("video", vis)
             return
 
-        fit = det.get("shape_fit")
-        if not fit:
-            return
-
-        mesh = generate_mesh_from_fit(fit)
-        if mesh is None:
-            return
-
-        obj_path = self.mesh_out_dir / f"frame_{frame_idx:06d}.obj"
-        save_obj(mesh, obj_path.as_posix())
-
-        # Render pretty view every render_every frames to reduce cost
-        if self.mesh_renderer and (frame_idx % self.render_every == 0):
-            png_path = self.mesh_renderer.process(obj_path)
-            preview = cv2.imread(png_path.as_posix())
-            if preview is not None:
-                cv2.imshow("mesh_render", preview)
-
-    def _attach_shape_fits(self, frame_shape, detections):
-        if not detections or self.shape_fitter is None:
-            return
-
-        for det in detections:
-            mask = det.get("mask")
-            bbox = det.get("bbox")
-            if mask is None or bbox is None:
-                det["shape_fit"] = None
-                continue
-
-            shape_hint = infer_shape_type(det.get("class_name"))
-            fit = self.shape_fitter.fit(mask, bbox, shape_hint, frame_shape)
-            det["shape_fit"] = fit
+        cv2.imshow("video", vis)
 
     def run(self, path, conf_threshold=0.3, refresh_every=10):
-        cap = cv2.VideoCapture(path)
+        cap = self.proccess_path(path)
 
         prev_frame = None
-        prev_dets = []
+        prev_meshes = []
         frame_idx = 0
 
         while True:
-            ok, frame = cap.read()
-            if not ok:
+            finished, frame = cap.read()
+            if not finished:
                 break
 
             need_refresh = (
-                self.tracker is None
-                or prev_frame is None
-                or not prev_dets
-                or frame_idx % refresh_every == 0
+                prev_frame is None
+                or not prev_meshes
+                or (frame_idx % int(refresh_every) == 0)
             )
 
+            meshes = []
+
             if need_refresh:
+                # Run YOLO detection and build mesh
                 dets = self.predictor.predict(frame, conf_threshold)
+                if dets:
+                    mesh_data = self.mesh_factory.build(dets[0], frame.shape, frame_bgr=frame)
+                    if mesh_data is not None:
+                        meshes = [mesh_data]
             else:
-                dets = self.tracker.track(
-                    prev_frame, frame, prev_dets, conf_threshold
-                )
-
-                if dets and "dx" in dets[0]:
-                    dets[0]["mask"] = self._shift_mask(
-                        prev_dets[0].get("mask"),
-                        dets[0]["dx"],
-                        dets[0]["dy"],
-                        frame.shape,
-                    )
-
-                if not dets:
+                # Track existing meshes
+                meshes = self.handle_mesh_tracking(prev_frame, frame, prev_meshes, conf_threshold)
+                if not meshes:
+                    # Fallback to detection if tracking fails
                     dets = self.predictor.predict(frame, conf_threshold)
+                    if dets:
+                        mesh_data = self.mesh_factory.build(dets[0], frame.shape, frame_bgr=frame)
+                        if mesh_data is not None:
+                            meshes = [mesh_data]
 
-            vis = frame.copy()
-            if dets:
-                self._attach_shape_fits(frame.shape, dets)
-                #draw_mask_overlay(vis, dets[0].get("mask"))
-                draw_detections(vis, dets)
-                for det in dets:
-                    draw_shape_fit(
-                        vis,
-                        det.get("shape_fit"),
-                        label_prefix=f"{det.get('class_name', '')}: ",
-                    )
-                    mesh = generate_mesh_from_fit(det.get("shape_fit"))
-                    if mesh is not None:
-                        draw_mesh_wireframe(vis, mesh, det.get("shape_fit"))
-                    self._export_and_render_mesh(det, frame_idx)
-            cv2.imshow("video", vis)
-           # plot_closeups(frame, dets)
+            if meshes:
+                self.handle_drawing(frame, meshes)
+            else:
+                cv2.imshow("video", frame)
 
             if cv2.waitKey(1) & 0xFF in (27, ord("q")):
                 break
 
-            prev_frame = frame
-            prev_dets = dets
+            prev_frame = frame.copy()
+            prev_meshes = meshes
             frame_idx += 1
 
         cap.release()
@@ -157,9 +136,9 @@ class Proccessor:
 
 def main():
     predictor = ObjectPredictor()
-    tracker = ObjectTracker()
-    p = Proccessor(predictor, tracker, render_mesh=True, render_every=30)
-    p.run("./data/bottle_vid.mp4")
+    tracker = MeshTracker()
+    p = Processor(predictor, tracker)
+    p.run("./data/napolion_vid.mp4", conf_threshold=0.3, refresh_every=10)
 
 
 if __name__ == "__main__":
