@@ -21,7 +21,6 @@ class MeshObject:
     color_bgr: Tuple[int, int, int] = (0, 255, 0)
 
     pose: "Pose" = field(default_factory=lambda: Pose())
-    cache: Dict[str, Any] = field(default_factory=dict)
 
     # --- Mesh State ---
     vertices: Optional[np.ndarray] = None   
@@ -34,7 +33,6 @@ class MeshObject:
     base_width: float = 1.0
 
     def apply_rotation(self, rotation_angle: float) -> None:
-        """ מעדכן את הסיבוב של האובייקט סביב ציר ה-Y """
         self.pose.rotation[1] += rotation_angle
 
     def copy(self) -> "MeshObject":

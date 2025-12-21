@@ -14,8 +14,5 @@ class Handler:
     def can_handle(self, det: Detection) -> bool:
         raise NotImplementedError
 
-    def create_object(self, det: Detection) -> MeshObject:
-        raise NotImplementedError
-
     def process(self, obj: MeshObject, det: Detection, frame_shape_hw: Tuple[int, int]) -> None:
         raise NotImplementedError

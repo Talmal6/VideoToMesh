@@ -7,32 +7,23 @@ from typing import Optional, List
 from class_proccesors.object_analyzer import ObjectAnalyzer
 from class_proccesors.detection import Detection
 from class_proccesors.predictor import Predictor
-from mesh.mesh_proccesors.cylinder_handler import CylinderHandler
+from mesh.mesh_manager import MeshManager
+from mesh.mesh_proccesors.cylinder_handler import CylinderHandler 
 from helpers.renderer import Renderer 
 
-class Processor:
+class VidToMesh:
     def __init__(self, predictor: ObjectAnalyzer):
         self.predictor = predictor
         
-        # 1. Handler Setup
-        # מכיוון שה-Handler שלנו חכם ושומר State, אנחנו יוצרים מופע יחיד שלו כאן.
-        self.handler = CylinderHandler(
-            labels=("bottle", "cup", "can"), 
-            sides=24,           # רזולוציית העיגול
-            y_step=5,           # דיוק סריקת הגובה
-            rotation_sensitivity=0.03
-        )
-        
-        # 2. Renderer Setup
+        self.handler = CylinderHandler()
+        self.mesh_manager = MeshManager(handlers=[self.handler])
+    
         self.renderer = Renderer(base_color=(0, 255, 255), alpha=0.4)
 
-    def proccess_path(self, source):
-        """
-        פונקציית עזר לפתיחת מקור הווידאו (כפי שביקשת)
-        """
+    def process_path(self, source):
+
         if isinstance(source, str):
             if not os.path.exists(source):
-                # בדיקה אם המחרוזת היא מספר (למשל "0")
                 if source.isdigit(): 
                     source = int(source)
                 else: 
@@ -47,7 +38,6 @@ class Processor:
             if source is None: source = 0
             cap = cv2.VideoCapture(source)
             if cap.isOpened(): 
-                # אופטימיזציה למצלמות רשת (Buffer נמוך = פחות דיליי)
                 cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
                 return cap
             raise RuntimeError("No working camera found.")
@@ -55,39 +45,20 @@ class Processor:
         raise TypeError(f"Source error: {source}")
 
     def _bootstrap(self, frame, conf_threshold, frame_idx) -> List:
-        """ 
-        מבצע את כל השרשרת: Predict -> Detect -> Mesh Process 
-        """
+        detection = self.predictor.predict(frame, conf_threshold=conf_threshold)
         
+        if detection:
+            mesh = self.mesh_manager.get_mesh(detection, frame)
+            if mesh and mesh.vertices is not None and len(mesh.vertices) > 0:
+                return mesh
+        return None
 
-        best_result = self.predictor.predict(frame, conf_threshold=conf_threshold)
         
-        mesh_objects = []
-
-        if best_result:
-
-            det = Detection(
-                object_id=0, 
-                label=best_result["class_name"],
-                confidence=best_result["confidence"],
-                frame_index=frame_idx,
-                bbox_xyxy=tuple(best_result["bbox"]),
-                mask=best_result["mask"]
-            )
-
-            # 3. שליחה ל-Handler
-            # ה-Handler זוכר את הפריים הקודם ומחשב את הסיבוב
-            if self.handler.can_handle(det):
-                mesh = self.handler.process(det, frame)
-                if mesh:
-                    mesh_objects.append(mesh)
-
-        return mesh_objects
 
     def run(self, source=0, conf_threshold=0.3):
         # אתחול המצלמה/וידאו
         try:
-            cap = self.proccess_path(source)
+            cap = self.process_path(source)
         except Exception as e:
             print(f"Error initializing source: {e}")
             return
@@ -104,7 +75,7 @@ class Processor:
 
             # --- הלב של התוכנית: _bootstrap ---
             try:
-                mesh_objects = self._bootstrap(frame, conf_threshold, frame_idx)
+                mesh_object = self._bootstrap(frame, conf_threshold, frame_idx)
             except Exception as e:
                 print(f"Error in _bootstrap: {e}")
                 import traceback
@@ -112,7 +83,7 @@ class Processor:
                 break
 
             # --- תצוגה ---
-            vis_frame, mesh_preview = self.renderer.render_frame(frame, mesh_objects)
+            vis_frame, mesh_preview = self.renderer.render_frame(frame, mesh_object)
 
             cv2.imshow("Mesh AR Tracker", vis_frame)
             if mesh_preview is not None:
@@ -121,6 +92,9 @@ class Processor:
             key = cv2.waitKey(1) & 0xFF
             if key in (27, ord("q")):
                 break
+            
+            obj_count = 1 if mesh_object else 0
+            print(f"Processed frame {frame_idx}, objects: {obj_count}")
 
             frame_idx += 1
 
@@ -135,10 +109,10 @@ def main():
     predictor = Predictor()
     
   
-    p = Processor(predictor)
+    p = VidToMesh(predictor)
 
 
-    source = "./data/bottle_vid.mp4"
+    source = "./data/napoleon_vid.mp4"
     
     p.run(source, conf_threshold=0.4)
 

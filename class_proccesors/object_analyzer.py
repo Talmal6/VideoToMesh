@@ -1,5 +1,6 @@
 import numpy as np
 from ultralytics import YOLO
+from class_proccesors.detection import Detection
 
 
 class ObjectAnalyzer:
@@ -101,7 +102,7 @@ class ObjectAnalyzer:
             kept.append(d)
 
         if not kept:
-            return []
+            return None
 
         # --- select foreground object (centered, small, not touching borders) ---
         def score(d):
@@ -133,4 +134,11 @@ class ObjectAnalyzer:
             )
 
         best = max(kept, key=score)
-        return best
+        return Detection(
+            object_id=0,
+            label=best["class_name"],
+            confidence=best["confidence"],
+            frame_index=0,
+            bbox_xyxy=tuple(best["bbox"]),
+            mask=best["mask"],
+            )
