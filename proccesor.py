@@ -4,13 +4,14 @@ import os
 from typing import Optional, List
 
 # --- Imports (מותאם למבנה התיקיות שלך) ---
-from class_proccesors.object_predictor import ObjectPredictor
+from class_proccesors.object_analyzer import ObjectAnalyzer
 from class_proccesors.detection import Detection
+from class_proccesors.predictor import Predictor
 from mesh.mesh_proccesors.cylinder_handler import CylinderHandler
 from helpers.renderer import Renderer 
 
 class Processor:
-    def __init__(self, predictor: ObjectPredictor):
+    def __init__(self, predictor: ObjectAnalyzer):
         self.predictor = predictor
         
         # 1. Handler Setup
@@ -19,7 +20,7 @@ class Processor:
             labels=("bottle", "cup", "can"), 
             sides=24,           # רזולוציית העיגול
             y_step=5,           # דיוק סריקת הגובה
-            rotation_sensitivity=0.005
+            rotation_sensitivity=0.03
         )
         
         # 2. Renderer Setup
@@ -58,16 +59,13 @@ class Processor:
         מבצע את כל השרשרת: Predict -> Detect -> Mesh Process 
         """
         
-        # 1. קבלת זיהוי מה-Predictor
-        # ה-ObjectPredictor שלך מחזיר Dictionary בודד (הכי טוב) או רשימה ריקה
+
         best_result = self.predictor.predict(frame, conf_threshold=conf_threshold)
         
         mesh_objects = []
 
         if best_result:
-            # 2. המרה ל-Detection Class
-            # בגלל שה-Predictor שלך כרגע לא מחזיר track_id, נשתמש ב-0 כברירת מחדל
-            # (זה בסדר כי אנחנו עובדים על אובייקט יחיד בפריים)
+
             det = Detection(
                 object_id=0, 
                 label=best_result["class_name"],
@@ -114,9 +112,11 @@ class Processor:
                 break
 
             # --- תצוגה ---
-            vis_frame = self.renderer.render_frame(frame, mesh_objects)
-            
+            vis_frame, mesh_preview = self.renderer.render_frame(frame, mesh_objects)
+
             cv2.imshow("Mesh AR Tracker", vis_frame)
+            if mesh_preview is not None:
+                cv2.imshow("Mesh AR Tracker - Side View", mesh_preview)
 
             key = cv2.waitKey(1) & 0xFF
             if key in (27, ord("q")):
@@ -130,17 +130,16 @@ class Processor:
 
 # --- Main Entry Point ---
 def main():
-    # 1. יצירת המודל
-    # וודא שהקובץ yolov8n-seg.pt קיים בתיקייה
-    predictor = ObjectPredictor(model_path="yolov8n-seg.pt") 
+
+
+    predictor = Predictor()
     
-    # 2. יצירת המעבד
+  
     p = Processor(predictor)
 
-    # 3. הגדרת המקור
-    source = "./data/bottle_vid.mp4" # לקובץ וידאו (וודא שהנתיב נכון)
+
+    source = "./data/bottle_vid.mp4"
     
-    # 4. הרצה
     p.run(source, conf_threshold=0.4)
 
 if __name__ == "__main__":

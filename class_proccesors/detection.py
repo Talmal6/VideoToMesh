@@ -12,3 +12,4 @@ class Detection:
     frame_index: int
     bbox_xyxy: Tuple[float, float, float, float]
     mask: Optional[np.ndarray] = None
+    frame: Optional[np.ndarray] = None

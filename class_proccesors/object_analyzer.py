@@ -2,7 +2,7 @@ import numpy as np
 from ultralytics import YOLO
 
 
-class ObjectPredictor:
+class ObjectAnalyzer:
     def __init__(self, model_path="yolov8n-seg.pt"):
         self.model = YOLO(model_path)
         self.names = self.model.names
