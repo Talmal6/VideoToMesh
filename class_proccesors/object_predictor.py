@@ -133,4 +133,4 @@ class ObjectPredictor:
             )
 
         best = max(kept, key=score)
-        return [best]
+        return best

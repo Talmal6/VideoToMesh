@@ -1,145 +1,147 @@
 import cv2
 import numpy as np
-from class_proccesors.object_predictor import ObjectPredictor
-from helpers.helper_fuctions import draw_detections, draw_mask_overlay
-from helpers.cad_sketch_render import render_mesh_overlay, render_debug_overlay
-from mesh_proccesors.mesh_factory import MeshFactory, MeshData
-from mesh_proccesors.mesh_tracker import MeshTracker
+import os
+from typing import Optional, List
 
+# --- Imports (מותאם למבנה התיקיות שלך) ---
+from class_proccesors.object_predictor import ObjectPredictor
+from class_proccesors.detection import Detection
+from mesh.mesh_proccesors.cylinder_handler import CylinderHandler
+from helpers.renderer import Renderer 
 
 class Processor:
-    def __init__(self, predictor: ObjectPredictor, tracker: MeshTracker = None):
+    def __init__(self, predictor: ObjectPredictor):
         self.predictor = predictor
-        self.tracker = tracker or MeshTracker()
-        self.mesh_factory = MeshFactory()
-
-    @staticmethod
-    def _shift_mask(mask, dx, dy, frame_shape):
-        """
-        Shift a mask by (dx, dy) pixels without wrap-around.
-        New areas are filled with 0.
-        """
-        if mask is None:
-            return None
-
-        h, w = frame_shape[:2]
-        m = np.asarray(mask)
-        if m.ndim > 2:
-            m = np.squeeze(m)
-        if m.ndim != 2:
-            return None
-
-        # ensure uint8 binary
-        m = (m > 0).astype(np.uint8) * 255
-
-        M = np.array([[1.0, 0.0, float(dx)],
-                      [0.0, 1.0, float(dy)]], dtype=np.float32)
-
-        shifted = cv2.warpAffine(
-            m, M, (w, h),
-            flags=cv2.INTER_NEAREST,
-            borderMode=cv2.BORDER_CONSTANT,
-            borderValue=0,
+        
+        # 1. Handler Setup
+        # מכיוון שה-Handler שלנו חכם ושומר State, אנחנו יוצרים מופע יחיד שלו כאן.
+        self.handler = CylinderHandler(
+            labels=("bottle", "cup", "can"), 
+            sides=24,           # רזולוציית העיגול
+            y_step=5,           # דיוק סריקת הגובה
+            rotation_sensitivity=0.005
         )
-        return shifted
+        
+        # 2. Renderer Setup
+        self.renderer = Renderer(base_color=(0, 255, 255), alpha=0.4)
 
-    @staticmethod
-    def _ensure_mask_frame_size(mask, frame_shape):
-        if mask is None:
-            return None
-        h, w = frame_shape[:2]
-        m = np.asarray(mask)
-        if m.ndim > 2:
-            m = np.squeeze(m)
-        if m.ndim != 2:
-            return None
-        if m.shape[:2] != (h, w):
-            m = cv2.resize(m.astype(np.uint8), (w, h), interpolation=cv2.INTER_NEAREST)
-        return m
+    def proccess_path(self, source):
+        """
+        פונקציית עזר לפתיחת מקור הווידאו (כפי שביקשת)
+        """
+        if isinstance(source, str):
+            if not os.path.exists(source):
+                # בדיקה אם המחרוזת היא מספר (למשל "0")
+                if source.isdigit(): 
+                    source = int(source)
+                else: 
+                    raise FileNotFoundError(f"Video file not found: {source}")
+            else:
+                cap = cv2.VideoCapture(source)
+                if not cap.isOpened(): 
+                    raise RuntimeError(f"Failed to open video file: {source}")
+                return cap
 
-    def proccess_path(self, path):
-        cap = cv2.VideoCapture(path)
-        if not cap.isOpened():
-            raise RuntimeError(f"Failed to open video: {path}")
-        return cap
+        if isinstance(source, int) or source is None:
+            if source is None: source = 0
+            cap = cv2.VideoCapture(source)
+            if cap.isOpened(): 
+                # אופטימיזציה למצלמות רשת (Buffer נמוך = פחות דיליי)
+                cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+                return cap
+            raise RuntimeError("No working camera found.")
+        
+        raise TypeError(f"Source error: {source}")
 
-    def handle_mesh_tracking(self, prev_frame, frame, prev_meshes, conf_threshold):
-        """Track meshes using similarity transform."""
-        return self.tracker.track(prev_frame, frame, prev_meshes, conf_threshold)
+    def _bootstrap(self, frame, conf_threshold, frame_idx) -> List:
+        """ 
+        מבצע את כל השרשרת: Predict -> Detect -> Mesh Process 
+        """
+        
+        # 1. קבלת זיהוי מה-Predictor
+        # ה-ObjectPredictor שלך מחזיר Dictionary בודד (הכי טוב) או רשימה ריקה
+        best_result = self.predictor.predict(frame, conf_threshold=conf_threshold)
+        
+        mesh_objects = []
 
-    def handle_drawing(self, frame, meshes):
-        vis = frame.copy()
-
-        # Render all tracked meshes
-        if meshes:
-            for mesh_data in meshes:
-                vis = render_mesh_overlay(vis, mesh_data)
-                render_debug_overlay(vis, mesh_data)
-            cv2.imshow("video", vis)
-            return
-
-        cv2.imshow("video", vis)
-
-    def run(self, path, conf_threshold=0.3, refresh_every=10):
-        cap = self.proccess_path(path)
-
-        prev_frame = None
-        prev_meshes = []
-        frame_idx = 0
-
-        while True:
-            finished, frame = cap.read()
-            if not finished:
-                break
-
-            need_refresh = (
-                prev_frame is None
-                or not prev_meshes
-                or (frame_idx % int(refresh_every) == 0)
+        if best_result:
+            # 2. המרה ל-Detection Class
+            # בגלל שה-Predictor שלך כרגע לא מחזיר track_id, נשתמש ב-0 כברירת מחדל
+            # (זה בסדר כי אנחנו עובדים על אובייקט יחיד בפריים)
+            det = Detection(
+                object_id=0, 
+                label=best_result["class_name"],
+                confidence=best_result["confidence"],
+                frame_index=frame_idx,
+                bbox_xyxy=tuple(best_result["bbox"]),
+                mask=best_result["mask"]
             )
 
-            meshes = []
+            # 3. שליחה ל-Handler
+            # ה-Handler זוכר את הפריים הקודם ומחשב את הסיבוב
+            if self.handler.can_handle(det):
+                mesh = self.handler.process(det, frame)
+                if mesh:
+                    mesh_objects.append(mesh)
 
-            if need_refresh:
-                # Run YOLO detection and build mesh
-                dets = self.predictor.predict(frame, conf_threshold)
-                if dets:
-                    mesh_data = self.mesh_factory.build(dets[0], frame.shape, frame_bgr=frame)
-                    if mesh_data is not None:
-                        meshes = [mesh_data]
-            else:
-                # Track existing meshes
-                meshes = self.handle_mesh_tracking(prev_frame, frame, prev_meshes, conf_threshold)
-                if not meshes:
-                    # Fallback to detection if tracking fails
-                    dets = self.predictor.predict(frame, conf_threshold)
-                    if dets:
-                        mesh_data = self.mesh_factory.build(dets[0], frame.shape, frame_bgr=frame)
-                        if mesh_data is not None:
-                            meshes = [mesh_data]
+        return mesh_objects
 
-            if meshes:
-                self.handle_drawing(frame, meshes)
-            else:
-                cv2.imshow("video", frame)
+    def run(self, source=0, conf_threshold=0.3):
+        # אתחול המצלמה/וידאו
+        try:
+            cap = self.proccess_path(source)
+        except Exception as e:
+            print(f"Error initializing source: {e}")
+            return
 
-            if cv2.waitKey(1) & 0xFF in (27, ord("q")):
+        frame_idx = 0
+        print(f"Starting Processor on source: {source}...")
+        print("Press 'q' or 'ESC' to exit.")
+
+        while True:
+            ok, frame = cap.read()
+            if not ok or frame is None:
+                print("End of stream or error reading frame.")
                 break
 
-            prev_frame = frame.copy()
-            prev_meshes = meshes
+            # --- הלב של התוכנית: _bootstrap ---
+            try:
+                mesh_objects = self._bootstrap(frame, conf_threshold, frame_idx)
+            except Exception as e:
+                print(f"Error in _bootstrap: {e}")
+                import traceback
+                traceback.print_exc()
+                break
+
+            # --- תצוגה ---
+            vis_frame = self.renderer.render_frame(frame, mesh_objects)
+            
+            cv2.imshow("Mesh AR Tracker", vis_frame)
+
+            key = cv2.waitKey(1) & 0xFF
+            if key in (27, ord("q")):
+                break
+
             frame_idx += 1
 
         cap.release()
         cv2.destroyAllWindows()
+        print("Processing finished.")
 
-
+# --- Main Entry Point ---
 def main():
-    predictor = ObjectPredictor()
-    tracker = MeshTracker()
-    p = Processor(predictor, tracker)
-    p.run("./data/napolion_vid.mp4", conf_threshold=0.3, refresh_every=10)
+    # 1. יצירת המודל
+    # וודא שהקובץ yolov8n-seg.pt קיים בתיקייה
+    predictor = ObjectPredictor(model_path="yolov8n-seg.pt") 
+    
+    # 2. יצירת המעבד
+    p = Processor(predictor)
 
+    # 3. הגדרת המקור
+    source = "./data/bottle_vid.mp4" # לקובץ וידאו (וודא שהנתיב נכון)
+    
+    # 4. הרצה
+    p.run(source, conf_threshold=0.4)
 
 if __name__ == "__main__":
     main()
