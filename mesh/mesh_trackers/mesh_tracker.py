@@ -7,7 +7,7 @@ from typing import Optional
 
 import numpy as np
 
-from class_proccesors.detection import Detection
+from detection.detection import Detection
 from mesh.mesh_shapes.mesh_object import MeshObject
 
 
@@ -47,6 +47,9 @@ class MeshTracker(ABC):
             mesh.vertices[:, 1] = y
             mesh.vertices[:, 2] = z
             mesh.vertices += center
+            
+            # Update pose rotation X
+            mesh.pose.rotation[0] += angle
 
     def rotate_y(self, mesh: MeshObject, angle: float) -> None:
         """Rotates the mesh around the Y axis (around its centroid). Like a vertical spinning top."""
@@ -59,6 +62,9 @@ class MeshTracker(ABC):
             mesh.vertices[:, 0] = x
             mesh.vertices[:, 2] = z
             mesh.vertices += center
+
+            # Update pose rotation Y
+            mesh.pose.rotation[1] += angle
 
     def rotate_z(self, mesh: MeshObject, angle: float) -> None:
         """Rotates the mesh around the Z axis (around its centroid). Like a screwdriver."""

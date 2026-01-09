@@ -1,5 +1,5 @@
 from typing import Tuple
-from class_proccesors.detection import Detection
+from detection.detection import Detection
 from mesh.mesh_shapes.mesh_object import MeshObject
 
 

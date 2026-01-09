@@ -285,6 +285,7 @@ class ObjectTracker:
           - dx, dy
           - tracking_confidence
           - mask warped (if existed)
+          -higher confidence means less tracking drift
         """
         old_gray = self._to_gray(old_frame)
         new_gray = self._to_gray(new_frame)

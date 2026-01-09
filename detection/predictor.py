@@ -1,21 +1,30 @@
-from class_proccesors.detection import Detection
-from class_proccesors.object_analyzer import ObjectAnalyzer
-from class_proccesors.object_tracker import ObjectTracker
+from detection.detection import Detection
+from detection.object_analyzer import ObjectAnalyzer
+from detection.object_tracker import ObjectTracker
 import copy
 from dataclasses import asdict
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Predictor:
-    def __init__(self):
-        
-        self.analyzer = ObjectAnalyzer(model_path="yolov8n-seg.pt")
+    def __init__(self, use_analyzer_every_n_frames=3, analyzer = ObjectAnalyzer(model_path="yolov8n-seg.pt")):
+        self.analyzer = analyzer
         self.tracker = ObjectTracker()
-        self.last_detection : Detection = None
+        self.last_detection: Detection = None
+        self.use_analyzer_every_n_frames = use_analyzer_every_n_frames
+        self.frames_since_analyzer = 0
 
     def predict(self, frame, conf_threshold=0.2):
-        if self.last_detection is None:
+        self.frames_since_analyzer += 1
+        
+        if self.frames_since_analyzer > self.use_analyzer_every_n_frames or self.last_detection is None:
+            logger.info("Running analyzer prediction.")
             detection = self.analyzer.predict(frame, conf_threshold=conf_threshold)
+            self.frames_since_analyzer = 0
         else:
+            logger.info("Running tracker.")
             last_frame = self.last_detection.frame if hasattr(self.last_detection, "frame") else self.last_detection["frame"]
             
             # Convert Detection object to dict for tracker
@@ -25,11 +34,10 @@ class Predictor:
             else:
                 det_dict = self.last_detection
 
-            tracked_objects = self.tracker.track(last_frame, frame, [det_dict], conf_threshold=conf_threshold)
+            tracked_objects = self.tracker.track(last_frame, frame, [det_dict], conf_threshold=0)
             
             if tracked_objects:
                 res_dict = tracked_objects[0]
-                # Convert back to Detection object
                 detection = Detection(
                     object_id=res_dict["object_id"],
                     label=res_dict["label"],
@@ -40,12 +48,12 @@ class Predictor:
                     frame=res_dict.get("frame")
                 )
             else:
-                detection = None
-            
-            if detection is None:
+                logger.info("Tracking failed, falling back to analyzer.")
                 detection = self.analyzer.predict(frame, conf_threshold=conf_threshold)
+                self.frames_since_analyzer = 0
         
         if detection:
+            logger.info(f"Detection found: {detection.label} ({detection.confidence:.2f})")
             self.last_detection = detection
             # support Detection objects with .frame attribute or dicts with 'frame' key
             if hasattr(self.last_detection, "frame"):
@@ -53,6 +61,7 @@ class Predictor:
             elif isinstance(self.last_detection, dict):
                 self.last_detection["frame"] = copy.deepcopy(frame)
         else:
+            logger.info("No detection found.")
             self.last_detection = None
             
         return detection

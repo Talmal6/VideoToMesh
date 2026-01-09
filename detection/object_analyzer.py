@@ -1,6 +1,6 @@
 import numpy as np
 from ultralytics import YOLO
-from class_proccesors.detection import Detection
+from detection.detection import Detection
 
 
 class ObjectAnalyzer:
@@ -67,7 +67,7 @@ class ObjectAnalyzer:
         frame_area = img_w * img_h
         return bbox_area / frame_area if frame_area > 0 else 0.0
 
-    def predict(self, frame, conf_threshold=0.3, iou_threshold=0.5):
+    def predict(self, frame, conf_threshold=0.1, iou_threshold=0.5):
         h, w = frame.shape[:2]
         results = self.model(frame, conf=conf_threshold, verbose=False)
 
@@ -113,24 +113,17 @@ class ObjectAnalyzer:
             center_dist = self._center_distance(bbox, w, h)
             center_score = 1.0 - center_dist
 
-            # Area penalty: prefer smaller objects (suppress tables/backgrounds)
             norm_area = self._normalized_area(bbox, w, h)
             area_penalty = 1.0 - norm_area  # 1 = tiny, 0 = fills frame
 
-            # Border penalty: objects touching borders are likely background
             border_touch = self._touches_border(bbox, w, h, margin=8)
             border_score = 1.0 - border_touch  # 1 = far from borders, 0 = touching all
 
-            # Weighted combination:
-            # - Center proximity is most important (foreground objects are centered)
-            # - Area penalty suppresses large background objects
-            # - Border penalty suppresses tables that span the frame
-            # - Confidence is included but doesn't dominate
             return (
-                0.70 * center_score
+                0.65 * center_score
                 + 0.15 * area_penalty
                 + 0.10 * border_score
-                + 0.05 * conf
+                + 0.10 * conf
             )
 
         best = max(kept, key=score)

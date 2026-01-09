@@ -2,16 +2,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Tuple, Optional, List
+import copy
+import logging
 
 import numpy as np
 import cv2
 
 
-from class_proccesors.detection import Detection
+from detection.detection import Detection
 from mesh.mesh_shapes.mesh_object import MeshObject
 from mesh.mesh_proccesors.mesh_handler import Handler
 from mesh.mesh_shapes.mesh_object import MeshObject
 
+logger = logging.getLogger(__name__)
 
 @dataclass
 class State:
@@ -31,10 +34,8 @@ class CylinderHandler(Handler):
         sides: int = 32,
         min_row_width_px: int = 8,
         min_rings: int = 10,
-        # Optional smoothing (מקטין רעד, לא “מכווץ”)
-        smooth_radius_alpha: float = 0.25,  #
+        smooth_radius_alpha: float = 0.25,  
         smooth_center_alpha: float = 0.25,
-        # Morphology to close small holes in mask rows
         close_kernel: int = 3,
     ):
         self.labels = labels
@@ -57,30 +58,79 @@ class CylinderHandler(Handler):
 
    
 
-    def process(self, obj: MeshObject, det: Detection, last_frame: Tuple[int, int]) -> None:
+    def process(self, obj: MeshObject, det: Detection, frame: np.ndarray) -> None:
         """
         build mesh from det.mask and det.bbox_xyxy.
         """
-        rows = self._split_mask_to_rows(det.mask, self.y_step)
+        # Resize mask if needed
+        mask = det.mask
+        h, w = frame.shape[:2]
+        if mask.shape[:2] != (h, w):
+            mask = cv2.resize(mask.astype(np.uint8), (w, h), interpolation=cv2.INTER_NEAREST)
+
+        rows = self._split_mask_to_rows(mask, self.y_step)
         radiuses = [width_px / 2.0 for row in rows if (width_px := self._get_row_width_px(row)) >= self.min_row_width_px]
         smoothed_radiuses = self._smooth_values(radiuses, self.smooth_radius_alpha)
         discs = [self._make_disc(radius, self.sides, y) for y, radius in enumerate(smoothed_radiuses)]
         if len(discs) < self.min_rings:
-            print("Not enough rings to build CylinderMesh. Aborting.")
+            logger.warning("Not enough rings to build CylinderMesh. Aborting.")
             return
         vertices, faces = self._convert_discs_to_mesh(discs)
-        vertices = self._move_mesh_to_mask(vertices, det.mask)
 
-        return MeshObject(
+        # Apply rotation from previous object if available
+        new_pose = None
+        if obj and obj.pose:
+            new_pose = copy.deepcopy(obj.pose)
+            # Rotate around centroid
+            center = vertices.mean(axis=0)
+            vertices -= center
+            
+            # Apply X rotation
+            rx = new_pose.rotation[0]
+            if rx != 0:
+                c, s = np.cos(rx), np.sin(rx)
+                y = vertices[:, 1] * c - vertices[:, 2] * s
+                z = vertices[:, 1] * s + vertices[:, 2] * c
+                vertices[:, 1] = y
+                vertices[:, 2] = z
+                
+            # Apply Y rotation
+            ry = new_pose.rotation[1]
+            if ry != 0:
+                c, s = np.cos(ry), np.sin(ry)
+                x = vertices[:, 0] * c + vertices[:, 2] * s
+                z = -vertices[:, 0] * s + vertices[:, 2] * c
+                vertices[:, 0] = x
+                vertices[:, 2] = z
+                
+            # Apply Z rotation
+            rz = new_pose.rotation[2]
+            if rz != 0:
+                c, s = np.cos(rz), np.sin(rz)
+                x = vertices[:, 0] * c - vertices[:, 1] * s
+                y = vertices[:, 0] * s + vertices[:, 1] * c
+                vertices[:, 0] = x
+                vertices[:, 1] = y
+            
+            vertices += center
+
+        vertices = self._move_mesh_to_mask(vertices, mask)
+
+        mesh_obj = MeshObject(
             object_id=det.object_id,
             label=det.label,
             confidence=det.confidence,
             frame_index=det.frame_index,
             bbox_xyxy=det.bbox_xyxy,
-            mask=det.mask,
+            mask=mask,
             vertices=vertices,
             faces=faces,
-            )
+        )
+        
+        if new_pose:
+            mesh_obj.pose = new_pose
+            
+        return mesh_obj
         
 
         
