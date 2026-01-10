@@ -1,0 +1,63 @@
+2026-01-10 15:52:47,454 - __main__ - INFO - Initializing YOLO Mesh Pipeline
+2026-01-10 15:52:47,454 - __main__ - INFO - Processing source: ./data/remote.mp4
+2026-01-10 15:52:47,602 - core.video_processor - INFO - Starting processor on source: ./data/remote.mp4
+2026-01-10 15:52:47,602 - core.video_processor - INFO - [Capture] source=file, fps=30.00, loop=False, realtime=True
+2026-01-10 15:52:47,602 - core.video_processor - INFO - [Mesh] worker started
+2026-01-10 15:52:47,602 - core.video_processor - INFO - Press 'q' or 'ESC' to exit
+2026-01-10 15:52:47,653 - core.video_processor - ERROR - Error in render loop: OpenCV(4.12.0) /io/opencv/modules/highgui/src/window.cpp:1284: error: (-2:Unspecified error) The function is not implemented. Rebuild the library with Windows, GTK+ 2.x or Cocoa support. If you are on Ubuntu or Debian, install libgtk2.0-dev and pkg-config, then re-run cmake or configure script in function 'cvNamedWindow'
+
+2026-01-10 15:52:47,659 - core.video_processor - INFO - [Mesh] worker stopped
+2026-01-10 15:52:47,662 - core.video_processor - INFO - Processing finished
+2026-01-10 15:52:55,607 - __main__ - INFO - Initializing YOLO Mesh Pipeline
+2026-01-10 15:52:55,607 - __main__ - INFO - Processing source: ./data/remote.mp4
+2026-01-10 15:52:55,618 - core.video_processor - INFO - Starting processor on source: ./data/remote.mp4
+2026-01-10 15:52:55,619 - core.video_processor - INFO - [Capture] source=file, fps=30.00, loop=False, realtime=True
+2026-01-10 15:52:55,619 - core.video_processor - INFO - [Mesh] worker started
+2026-01-10 15:52:55,619 - core.video_processor - INFO - Press 'q' or 'ESC' to exit
+2026-01-10 15:52:55,624 - core.video_processor - ERROR - Error in render loop: OpenCV(4.12.0) /io/opencv/modules/highgui/src/window.cpp:1284: error: (-2:Unspecified error) The function is not implemented. Rebuild the library with Windows, GTK+ 2.x or Cocoa support. If you are on Ubuntu or Debian, install libgtk2.0-dev and pkg-config, then re-run cmake or configure script in function 'cvNamedWindow'
+
+2026-01-10 15:52:55,625 - detection.predictor - INFO - Running analyzer prediction.
+2026-01-10 15:52:56,626 - core.video_processor - INFO - Processing finished
+2026-01-10 15:53:29,494 - __main__ - INFO - Initializing YOLO Mesh Pipeline
+2026-01-10 15:53:29,494 - __main__ - INFO - Processing source: ./data/remote.mp4
+2026-01-10 15:53:29,505 - core.video_processor - INFO - Starting processor on source: ./data/remote.mp4
+2026-01-10 15:53:29,506 - core.video_processor - INFO - [Capture] source=file, fps=30.00, loop=False, realtime=True
+2026-01-10 15:53:29,506 - core.video_processor - INFO - [Mesh] worker started
+2026-01-10 15:53:29,506 - core.video_processor - INFO - Press 'q' or 'ESC' to exit
+2026-01-10 15:53:29,510 - core.video_processor - ERROR - Error in render loop: OpenCV(4.12.0) /io/opencv/modules/highgui/src/window.cpp:1284: error: (-2:Unspecified error) The function is not implemented. Rebuild the library with Windows, GTK+ 2.x or Cocoa support. If you are on Ubuntu or Debian, install libgtk2.0-dev and pkg-config, then re-run cmake or configure script in function 'cvNamedWindow'
+
+2026-01-10 15:53:29,512 - detection.predictor - INFO - Running analyzer prediction.
+2026-01-10 15:53:30,513 - core.video_processor - INFO - Processing finished
+2026-01-10 15:54:47,214 - __main__ - INFO - Initializing YOLO Mesh Pipeline
+2026-01-10 15:54:47,214 - __main__ - INFO - Processing source: ./data/remote.mp4
+2026-01-10 15:54:47,225 - core.video_processor - INFO - Starting processor on source: ./data/remote.mp4
+2026-01-10 15:54:47,225 - core.video_processor - INFO - [Capture] source=file, fps=30.00, loop=False, realtime=True
+2026-01-10 15:54:47,226 - core.video_processor - INFO - [Mesh] worker started
+2026-01-10 15:54:47,226 - core.video_processor - INFO - Headless mode: display disabled
+2026-01-10 15:54:47,232 - detection.predictor - INFO - Running analyzer prediction.
+2026-01-10 15:54:47,346 - core.video_processor - INFO - [UI] frame=2 mesh_from=None lag_frames=None mesh=no
+2026-01-10 15:54:48,583 - core.video_processor - INFO - Processing finished
+2026-01-10 15:57:47,860 - __main__ - INFO - Initializing YOLO Mesh Pipeline
+2026-01-10 15:57:47,860 - __main__ - INFO - Processing source: ./data/remote.mp4
+2026-01-10 15:57:47,871 - core.video_processor - INFO - Starting processor on source: ./data/remote.mp4
+2026-01-10 15:57:47,872 - core.video_processor - INFO - [Capture] source=file, fps=30.00, loop=False, realtime=True
+2026-01-10 15:57:47,872 - core.video_processor - INFO - [Mesh] worker started
+2026-01-10 15:57:47,872 - core.video_processor - INFO - Headless mode: display disabled
+2026-01-10 15:57:47,878 - detection.predictor - INFO - Running analyzer prediction.
+2026-01-10 15:57:47,962 - core.video_processor - INFO - [UI] frame=1 mesh_from=None lag_frames=None mesh=no
+2026-01-10 15:57:48,863 - detection.predictor - INFO - Detection found: remote (0.85)
+2026-01-10 15:57:48,864 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-10 15:57:48,920 - core.video_processor - INFO - [Mesh] worker stopped
+2026-01-10 15:57:48,920 - core.video_processor - INFO - Processing finished
+2026-01-10 15:58:59,457 - __main__ - INFO - Initializing YOLO Mesh Pipeline
+2026-01-10 15:58:59,457 - __main__ - INFO - Processing source: ./data/remote.mp4
+2026-01-10 15:58:59,468 - core.video_processor - INFO - Starting processor on source: ./data/remote.mp4
+2026-01-10 15:58:59,469 - core.video_processor - INFO - [Capture] source=file, fps=30.00, loop=False, realtime=True
+2026-01-10 15:58:59,469 - core.video_processor - INFO - [Mesh] worker started
+2026-01-10 15:58:59,469 - core.video_processor - INFO - Headless mode: display disabled
+2026-01-10 15:58:59,474 - detection.predictor - INFO - Running analyzer prediction.
+2026-01-10 15:58:59,559 - core.video_processor - INFO - [UI] frame=1 mesh_from=None lag_frames=None mesh=no
+2026-01-10 15:59:00,371 - detection.predictor - INFO - Detection found: remote (0.85)
+2026-01-10 15:59:00,372 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-10 15:59:00,380 - core.video_processor - INFO - [Mesh] worker stopped
+2026-01-10 15:59:00,381 - core.video_processor - INFO - Processing finished

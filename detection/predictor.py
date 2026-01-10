@@ -65,3 +65,20 @@ class Predictor:
             self.last_detection = None
             
         return detection
+
+    def close(self) -> None:
+        """Release heavy resources to avoid shutdown-time crashes."""
+        try:
+            model = getattr(self.analyzer, "model", None)
+            if model is not None:
+                del model
+                self.analyzer.model = None
+        except Exception:
+            pass
+        try:
+            import torch
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+                torch.cuda.empty_cache()
+        except Exception:
+            pass

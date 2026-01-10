@@ -39,7 +39,7 @@ class MeshPacket:
 
 class LatestValue:
     """Thread-safe storage for the latest value."""
-    
+
     def __init__(self):
         self._lock = threading.Lock()
         self._value = None
@@ -56,13 +56,18 @@ class LatestValue:
 class VidToMesh:
     """
     Multi-threaded video processing pipeline for real-time mesh extraction and AR tracking.
-    
+
     Architecture:
         - Capture thread: Reads frames from video source
         - Mesh thread: Processes frames and generates meshes
         - Render thread (main): Displays results with AR overlay
+
+    Notes:
+        - For file sources, you can choose between:
+            * realtime=False: pace frames to the file's FPS (video-like playback)
+            * realtime=True: treat file as live stream (no FPS pacing; drop frames to minimize latency)
     """
-    
+
     def __init__(
         self,
         predictor: Predictor,
@@ -139,8 +144,17 @@ class VidToMesh:
             except queue.Full:
                 pass
 
-    def _capture_loop(self, cap: cv2.VideoCapture, loop: bool = False) -> None:
-        """Capture thread: reads frames from video source."""
+    def _capture_loop(self, cap: cv2.VideoCapture, loop: bool = False, realtime: bool = False) -> None:
+        """
+        Capture thread: reads frames from video source.
+
+        If source is a file:
+            - realtime=False: pace reads to match file FPS (video playback)
+            - realtime=True: treat as live stream (no pacing; process as fast as possible)
+
+        If source is a camera:
+            - pacing is handled by the camera driver; realtime flag is effectively irrelevant.
+        """
         is_file = self._is_file_source(cap)
         fps = self._get_source_fps(cap)
         frame_period = 1.0 / max(1.0, fps)
@@ -149,7 +163,7 @@ class VidToMesh:
         idx = 0
 
         src_type = "file" if is_file else "camera"
-        logger.info(f"[Capture] source={src_type}, fps={fps:.2f}, loop={loop}")
+        logger.info(f"[Capture] source={src_type}, fps={fps:.2f}, loop={loop}, realtime={realtime}")
 
         while not self._stop.is_set():
             ok, frame = cap.read()
@@ -157,7 +171,7 @@ class VidToMesh:
                 if loop and is_file:
                     logger.info("Looping video...")
                     cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-                    t0 = time.perf_counter() # Reset timer for sync
+                    t0 = time.perf_counter()  # Reset timer for sync
                     idx = 0
                     continue
                 else:
@@ -174,7 +188,8 @@ class VidToMesh:
             self._put_drop_old(self._frame_q, pkt)
             idx += 1
 
-            if is_file:
+            # File pacing only when NOT treating as realtime
+            if is_file and not realtime:
                 target = t0 + idx * frame_period
                 sleep_s = target - time.perf_counter()
                 if sleep_s > 0:
@@ -185,7 +200,7 @@ class VidToMesh:
     def _mesh_loop(self, conf_threshold: float) -> None:
         """Mesh thread: processes frames and generates meshes."""
         logger.info("[Mesh] worker started")
-        
+
         while not self._stop.is_set():
             try:
                 pkt: FramePacket = self._frame_q.get(timeout=0.05)
@@ -212,51 +227,89 @@ class VidToMesh:
 
         logger.info("[Mesh] worker stopped")
 
-    def _render_loop(self) -> None:
+    def _render_loop(
+        self,
+        output_path: Optional[str] = None,
+        output_fps: Optional[float] = None,
+        show: bool = True
+    ) -> None:
         """Render thread (main): displays results with AR overlay."""
-        logger.info("Press 'q' or 'ESC' to exit")
+        if show:
+            logger.info("Press 'q' or 'ESC' to exit")
+            cv2.namedWindow(self._win_main, cv2.WINDOW_NORMAL)
+            self.renderer.attach_mouse(self._win_main)
+        else:
+            logger.info("Headless mode: display disabled")
 
-        cv2.namedWindow(self._win_main, cv2.WINDOW_NORMAL)
-        self.renderer.attach_mouse(self._win_main)
+        writer = None
 
-        while not self._stop.is_set():
-            frame_pkt: Optional[FramePacket] = self._latest_frame.get()
-            if frame_pkt is None:
-                time.sleep(0.005)
-                continue
+        try:
+            while not self._stop.is_set():
+                frame_pkt: Optional[FramePacket] = self._latest_frame.get()
+                if frame_pkt is None:
+                    time.sleep(0.005)
+                    continue
 
-            mesh_pkt: Optional[MeshPacket] = self._latest_mesh.get()
-            mesh_obj = mesh_pkt.mesh_object if mesh_pkt is not None else None
+                mesh_pkt: Optional[MeshPacket] = self._latest_mesh.get()
+                mesh_obj = mesh_pkt.mesh_object if mesh_pkt is not None else None
 
-            vis_frame, _ = self.renderer.render_frame(frame_pkt.frame, mesh_obj)
-            cv2.imshow(self._win_main, vis_frame)
+                vis_frame, _ = self.renderer.render_frame(frame_pkt.frame, mesh_obj)
 
-            key = cv2.waitKey(1) & 0xFF
-            if key in (27, ord("q")):
-                self._stop.set()
-                break
+                if output_path and writer is None:
+                    os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
+                    height, width = vis_frame.shape[:2]
+                    fps = output_fps if output_fps is not None else 30.0
+                    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+                    writer = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
+                    if not writer.isOpened():
+                        logger.error(f"Failed to open video writer: {output_path}")
+                        writer = None
 
-            now = time.time()
-            if now - self._last_ui_print > 0.5:
-                self._last_ui_print = now
-                mesh_from = mesh_pkt.idx if mesh_pkt is not None else None
-                mesh_ok = "yes" if mesh_obj is not None else "no"
-                lag_frames = int(frame_pkt.idx - mesh_from) if mesh_from is not None else None
-                logger.info(
-                    f"[UI] frame={frame_pkt.idx} mesh_from={mesh_from} "
-                    f"lag_frames={lag_frames} mesh={mesh_ok}"
-                )
+                if writer is not None:
+                    writer.write(vis_frame)
 
-        cv2.destroyAllWindows()
+                if show:
+                    cv2.imshow(self._win_main, vis_frame)
+                    key = cv2.waitKey(1) & 0xFF
+                    if key in (27, ord("q")):
+                        self._stop.set()
+                        break
 
-    def run(self, source=0, conf_threshold: float = 0.3, loop: bool = False) -> None:
+                now = time.time()
+                if now - self._last_ui_print > 0.5:
+                    self._last_ui_print = now
+                    mesh_from = mesh_pkt.idx if mesh_pkt is not None else None
+                    mesh_ok = "yes" if mesh_obj is not None else "no"
+                    lag_frames = int(frame_pkt.idx - mesh_from) if mesh_from is not None else None
+                    logger.info(
+                        f"[UI] frame={frame_pkt.idx} mesh_from={mesh_from} "
+                        f"lag_frames={lag_frames} mesh={mesh_ok}"
+                    )
+        finally:
+            if writer is not None:
+                writer.release()
+            if show:
+                cv2.destroyAllWindows()
+
+    def run(
+        self,
+        source=0,
+        conf_threshold: float = 0.3,
+        loop: bool = False,
+        realtime: bool = False,
+        output_path: Optional[str] = None,
+        show: bool = True
+    ) -> None:
         """
         Run the video processing pipeline.
-        
+
         Args:
             source: Video file path, camera index, or None for default camera
             conf_threshold: Confidence threshold for object detection
             loop: Whether to loop video source
+            realtime: If True, treat file input like a live stream (no FPS pacing)
+            output_path: Optional output file path for saving rendered frames
+            show: Whether to display the UI window
         """
         try:
             cap = self.process_path(source)
@@ -266,12 +319,9 @@ class VidToMesh:
 
         self._stop.clear()
 
-        t_cap = threading.Thread(target=self._capture_loop, args=(cap, loop), daemon=True)
-        t_mesh = threading.Thread(
-            target=self._mesh_loop,
-            args=(conf_threshold,),
-            daemon=True
-        )
+        output_fps = self._get_source_fps(cap)
+        t_cap = threading.Thread(target=self._capture_loop, args=(cap, loop, realtime))
+        t_mesh = threading.Thread(target=self._mesh_loop, args=(conf_threshold,))
 
         logger.info(f"Starting processor on source: {source}")
 
@@ -279,12 +329,14 @@ class VidToMesh:
         t_mesh.start()
 
         try:
-            self._render_loop()
+            self._render_loop(output_path=output_path, output_fps=output_fps, show=show)
         except Exception as e:
             logger.error(f"Error in render loop: {e}")
             raise
         finally:
             self._stop.set()
-            t_cap.join(timeout=1.0)
-            t_mesh.join(timeout=1.0)
+            t_cap.join()
+            t_mesh.join()
+            if hasattr(self.predictor, "close"):
+                self.predictor.close()
             logger.info("Processing finished")

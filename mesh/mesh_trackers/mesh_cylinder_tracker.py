@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from typing import Optional
 from copy import deepcopy
 from detection.detection import Detection
 from mesh.mesh_shapes.mesh_object import MeshObject
@@ -39,7 +40,7 @@ class MeshCylinderTracker(MeshTracker):
     def can_track(self, det: Detection) -> bool:
         return det.label in ("bottle", "cup", "can", "box", "book", "tv", "monitor", "phone") and det.mask is not None
 
-    def track(self, det: Detection, curr_frame) -> MeshObject | None:
+    def track(self, det: Detection, curr_frame) -> Optional[MeshObject]:
         if (not self.last_state) or (self.last_state.last_mesh is None) or (self.last_state.last_frame is None):
             return None
         if curr_frame is None:

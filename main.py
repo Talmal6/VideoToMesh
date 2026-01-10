@@ -36,15 +36,48 @@ Examples:
         default=None,
         help="Confidence threshold for detection (0.0-1.0)"
     )
+
+    parser.add_argument(
+        "--realtime",
+        action="store_true",
+        help="Treat file input like realtime stream (no FPS pacing)"
+    )
+
+    parser.add_argument(
+        "--output",
+        default=None,
+        help="Output video file path for rendered frames"
+    )
+
+    parser.add_argument(
+        "--headless",
+        action="store_true",
+        help="Disable display window (headless mode)"
+    )
     
     args = parser.parse_args()
-    
+
+    source = args.source if args.source is not None else "./data/remote.mp4"
+    conf = args.conf if args.conf is not None else 0.05
+
     if args.pipeline == "yolo":
         from pipelines.yolo_pipeline import main as yolo_main
-        yolo_main()
+        yolo_main(
+            source=source,
+            conf_threshold=conf,
+            realtime=args.realtime,
+            output_path=args.output,
+            show=not args.headless
+        )
     elif args.pipeline == "sam3d":
         from pipelines.sam3d_pipeline import main as sam3d_main
-        sam3d_main()
+        sam3d_main(
+            source=source,
+            conf_threshold=conf,
+            realtime=args.realtime,
+            output_path=args.output,
+            show=not args.headless
+        )
     else:
         parser.print_help()
         sys.exit(1)

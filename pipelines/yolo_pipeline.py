@@ -11,6 +11,8 @@ if __name__ == "__main__":
 
 import logging
 
+import argparse
+
 from detection.predictor import Predictor
 from mesh.mesh_proccesors.cylinder_handler import CylinderHandler
 from mesh.mesh_proccesors.box_handler import BoxHandler
@@ -28,7 +30,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def main():
+def main(
+    source: str = "./data/remote.mp4",
+    conf_threshold: float = 0.05,
+    realtime: bool = False,
+    output_path: str = None,
+    show: bool = True
+):
     """Run YOLO-based mesh extraction pipeline."""
     logger.info("Initializing YOLO Mesh Pipeline")
     
@@ -47,11 +55,30 @@ def main():
         renderer_alpha=0.4
     )
     
-    source = "./data/remote.mp4"
     logger.info(f"Processing source: {source}")
     
-    app.run(source, conf_threshold=0.05)
+    app.run(
+        source,
+        conf_threshold=conf_threshold,
+        realtime=realtime,
+        output_path=output_path,
+        show=show
+    )
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="YOLO Mesh Pipeline")
+    parser.add_argument("--source", default="./data/remote.mp4", help="Video source path or camera index")
+    parser.add_argument("--conf", type=float, default=0.05, help="Confidence threshold (0.0-1.0)")
+    parser.add_argument("--realtime", action="store_true", help="Treat file input like realtime stream")
+    parser.add_argument("--output", default=None, help="Output video file path for rendered frames")
+    parser.add_argument("--headless", action="store_true", help="Disable display window (headless mode)")
+    args = parser.parse_args()
+
+    main(
+        source=args.source,
+        conf_threshold=args.conf,
+        realtime=args.realtime,
+        output_path=args.output,
+        show=not args.headless
+    )

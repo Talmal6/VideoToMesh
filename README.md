@@ -125,6 +125,12 @@ python main.py yolo --source 0
 
 # Custom confidence threshold
 python main.py sam3d --conf 0.3
+
+# Save rendered output and treat file as realtime stream
+python main.py yolo --output ./data/output.mp4 --realtime
+
+# Headless mode (no display window)
+python main.py yolo --output ./data/output.mp4 --realtime --headless
 ```
 
 ### Python API
