@@ -1,0 +1,335 @@
+2026-01-09 18:34:41,475 - __main__ - INFO - Initializing SAM3D Mesh Pipeline
+2026-01-09 18:34:41,475 - __main__ - INFO - NOTE: First run downloads MiDaS model (~82MB)
+2026-01-09 18:34:41,475 - __main__ - INFO - Processing source: ./data/remote.mp4
+2026-01-09 18:34:41,487 - core.video_processor - INFO - Starting processor on source: ./data/remote.mp4
+2026-01-09 18:34:41,487 - core.video_processor - INFO - [Capture] source=file, fps=30.00, loop=True
+2026-01-09 18:34:41,487 - core.video_processor - INFO - [Mesh] worker started
+2026-01-09 18:34:41,487 - core.video_processor - INFO - Press 'q' or 'ESC' to exit
+2026-01-09 18:34:41,499 - detection.predictor - INFO - Running analyzer prediction.
+2026-01-09 18:34:41,555 - core.video_processor - INFO - [UI] frame=1 mesh_from=None lag_frames=None mesh=no
+2026-01-09 18:34:41,891 - detection.predictor - INFO - Detection found: remote (0.85)
+2026-01-09 18:34:41,892 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:34:41,892 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:34:41,892 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:34:41,892 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:34:42,062 - core.video_processor - INFO - [UI] frame=16 mesh_from=None lag_frames=None mesh=no
+2026-01-09 18:34:42,567 - core.video_processor - INFO - [UI] frame=31 mesh_from=None lag_frames=None mesh=no
+2026-01-09 18:34:43,146 - core.video_processor - INFO - [UI] frame=47 mesh_from=None lag_frames=None mesh=no
+2026-01-09 18:34:43,651 - core.video_processor - INFO - [UI] frame=64 mesh_from=None lag_frames=None mesh=no
+2026-01-09 18:34:44,153 - core.video_processor - INFO - [UI] frame=79 mesh_from=None lag_frames=None mesh=no
+2026-01-09 18:34:44,235 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:34:44,239 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 32470 points
+2026-01-09 18:34:44,667 - core.video_processor - INFO - [UI] frame=94 mesh_from=None lag_frames=None mesh=no
+2026-01-09 18:34:45,172 - core.video_processor - INFO - [UI] frame=109 mesh_from=None lag_frames=None mesh=no
+2026-01-09 18:34:45,684 - core.video_processor - INFO - [UI] frame=125 mesh_from=None lag_frames=None mesh=no
+2026-01-09 18:34:48,316 - core.video_processor - INFO - [UI] frame=127 mesh_from=None lag_frames=None mesh=no
+2026-01-09 18:34:48,354 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 34915 vertices, 69536 faces
+2026-01-09 18:34:48,355 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:34:48,395 - detection.predictor - INFO - Detection found: remote (0.85)
+2026-01-09 18:34:48,396 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:34:48,397 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:34:48,397 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:34:48,399 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:34:48,689 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:34:48,695 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 32470 points
+2026-01-09 18:35:04,462 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 23746 vertices, 46904 faces
+2026-01-09 18:35:04,465 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:35:04,489 - detection.predictor - INFO - Detection found: remote (0.79)
+2026-01-09 18:35:04,489 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:35:04,492 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:35:04,494 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:35:04,496 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:35:04,522 - core.video_processor - INFO - Looping video...
+2026-01-09 18:35:05,147 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:35:05,169 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 32448 points
+2026-01-09 18:35:08,166 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 20133 vertices, 39785 faces
+2026-01-09 18:35:08,170 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:35:08,192 - detection.predictor - INFO - Detection found: remote (0.71)
+2026-01-09 18:35:08,193 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:35:08,193 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:35:08,195 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:35:08,197 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:35:08,730 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:35:08,762 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 32448 points
+2026-01-09 18:35:11,479 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 27837 vertices, 55323 faces
+2026-01-09 18:35:11,485 - detection.predictor - INFO - Running analyzer prediction.
+2026-01-09 18:35:11,796 - detection.predictor - INFO - Detection found: remote (0.93)
+2026-01-09 18:35:11,807 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:35:11,809 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:35:11,810 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:35:11,825 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:35:12,453 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:35:12,459 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 50315 points
+2026-01-09 18:35:52,960 - core.video_processor - INFO - Looping video...
+2026-01-09 18:35:52,960 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 34526 vertices, 68743 faces
+2026-01-09 18:35:52,982 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:35:53,052 - detection.predictor - INFO - Detection found: remote (0.84)
+2026-01-09 18:35:53,075 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:35:53,077 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:35:53,078 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:35:53,080 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:35:53,154 - core.video_processor - INFO - [UI] frame=133 mesh_from=0 lag_frames=133 mesh=yes
+2026-01-09 18:35:53,322 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:35:53,337 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 50315 points
+2026-01-09 18:35:58,134 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 30053 vertices, 59702 faces
+2026-01-09 18:35:58,146 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:35:58,188 - detection.predictor - INFO - Detection found: remote (0.80)
+2026-01-09 18:35:58,204 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:35:58,224 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:35:58,226 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:35:58,227 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:35:58,693 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:35:58,701 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 50315 points
+2026-01-09 18:36:03,625 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 30840 vertices, 61150 faces
+2026-01-09 18:36:03,633 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:36:03,683 - detection.predictor - INFO - Detection found: remote (0.80)
+2026-01-09 18:36:03,706 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:36:03,708 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:36:03,710 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:36:03,713 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:36:04,317 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:36:04,338 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 50315 points
+2026-01-09 18:36:35,761 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 30481 vertices, 60321 faces
+2026-01-09 18:36:35,765 - detection.predictor - INFO - Running analyzer prediction.
+2026-01-09 18:36:35,767 - core.video_processor - INFO - Looping video...
+2026-01-09 18:36:36,218 - detection.predictor - INFO - Detection found: remote (0.91)
+2026-01-09 18:36:36,221 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:36:36,221 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:36:36,222 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:36:36,224 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:36:37,004 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:36:37,026 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 46508 points
+2026-01-09 18:36:43,786 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 33800 vertices, 67232 faces
+2026-01-09 18:36:43,792 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:36:43,835 - detection.predictor - INFO - Detection found: remote (0.89)
+2026-01-09 18:36:43,845 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:36:43,852 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:36:43,856 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:36:43,862 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:36:44,379 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:36:44,390 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 46508 points
+2026-01-09 18:36:48,562 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 29395 vertices, 58365 faces
+2026-01-09 18:36:48,567 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:36:48,601 - detection.predictor - INFO - Detection found: remote (0.88)
+2026-01-09 18:36:48,610 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:36:48,613 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:36:48,613 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:36:48,613 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:36:48,936 - core.video_processor - INFO - Looping video...
+2026-01-09 18:36:49,017 - core.video_processor - INFO - [UI] frame=5 mesh_from=128 lag_frames=-123 mesh=yes
+2026-01-09 18:36:49,087 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:36:49,095 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 46508 points
+2026-01-09 18:36:53,072 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 24921 vertices, 49434 faces
+2026-01-09 18:36:53,076 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:36:53,108 - detection.predictor - INFO - Detection found: remote (0.81)
+2026-01-09 18:36:53,109 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:36:53,109 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:36:53,110 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:36:53,110 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:36:53,536 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:36:53,551 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 46508 points
+2026-01-09 18:36:57,886 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 31899 vertices, 63392 faces
+2026-01-09 18:36:57,901 - detection.predictor - INFO - Running analyzer prediction.
+2026-01-09 18:36:58,299 - core.video_processor - INFO - Looping video...
+2026-01-09 18:36:58,516 - detection.predictor - INFO - Detection found: remote (0.93)
+2026-01-09 18:36:58,520 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:36:58,522 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:36:58,528 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:36:58,532 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:36:59,203 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:36:59,211 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 56504 points
+2026-01-09 18:38:27,036 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 35696 vertices, 70909 faces
+2026-01-09 18:38:27,040 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:38:27,074 - detection.predictor - INFO - Detection found: remote (0.87)
+2026-01-09 18:38:27,076 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:38:27,077 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:38:27,082 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:38:27,083 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:38:27,643 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:38:27,654 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 56504 points
+2026-01-09 18:38:31,993 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 27934 vertices, 55443 faces
+2026-01-09 18:38:31,998 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:38:32,027 - detection.predictor - INFO - Detection found: remote (0.87)
+2026-01-09 18:38:32,028 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:38:32,029 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:38:32,030 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:38:32,032 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:38:32,189 - core.video_processor - INFO - Looping video...
+2026-01-09 18:38:32,671 - core.video_processor - INFO - [UI] frame=1 mesh_from=39 lag_frames=-38 mesh=yes
+2026-01-09 18:38:32,717 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:38:32,722 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 56504 points
+2026-01-09 18:38:37,100 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 27559 vertices, 54684 faces
+2026-01-09 18:38:37,103 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:38:37,128 - detection.predictor - INFO - Detection found: remote (0.85)
+2026-01-09 18:38:37,128 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:38:37,131 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:38:37,133 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:38:37,133 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:38:37,691 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:38:37,695 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 56504 points
+2026-01-09 18:38:42,602 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 23614 vertices, 46821 faces
+2026-01-09 18:38:42,608 - detection.predictor - INFO - Running analyzer prediction.
+2026-01-09 18:38:42,847 - core.video_processor - INFO - Looping video...
+2026-01-09 18:38:43,025 - detection.predictor - INFO - Detection found: remote (0.79)
+2026-01-09 18:38:43,026 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:38:43,027 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:38:43,027 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:38:43,028 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:38:43,657 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:38:43,674 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 52522 points
+2026-01-09 18:38:49,616 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 33634 vertices, 66869 faces
+2026-01-09 18:38:49,636 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:38:49,691 - detection.predictor - INFO - Detection found: remote (0.78)
+2026-01-09 18:38:49,693 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:38:49,707 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:38:49,709 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:38:49,712 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:38:50,220 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:38:50,236 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 52522 points
+2026-01-09 18:38:54,336 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 28106 vertices, 55734 faces
+2026-01-09 18:38:54,346 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:38:54,376 - detection.predictor - INFO - Detection found: remote (0.78)
+2026-01-09 18:38:54,385 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:38:54,385 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:38:54,385 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:38:54,385 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:38:54,585 - core.video_processor - INFO - Looping video...
+2026-01-09 18:38:55,095 - core.video_processor - INFO - [UI] frame=14 mesh_from=28 lag_frames=-14 mesh=yes
+2026-01-09 18:38:55,151 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:38:55,157 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 52522 points
+2026-01-09 18:38:59,390 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 30084 vertices, 59661 faces
+2026-01-09 18:38:59,392 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:38:59,416 - detection.predictor - INFO - Detection found: remote (0.73)
+2026-01-09 18:38:59,418 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:38:59,418 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:38:59,420 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:38:59,420 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:38:59,885 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:38:59,905 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 52522 points
+2026-01-09 18:39:05,658 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 25001 vertices, 49536 faces
+2026-01-09 18:39:05,664 - detection.predictor - INFO - Running analyzer prediction.
+2026-01-09 18:39:05,994 - core.video_processor - INFO - Looping video...
+2026-01-09 18:39:06,288 - detection.predictor - INFO - Detection found: remote (0.90)
+2026-01-09 18:39:06,290 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:39:06,291 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:39:06,292 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:39:06,294 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:39:06,691 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:39:06,704 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 54007 points
+2026-01-09 18:39:11,373 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 34490 vertices, 68616 faces
+2026-01-09 18:39:11,379 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:39:11,417 - detection.predictor - INFO - Detection found: remote (0.87)
+2026-01-09 18:39:11,425 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:39:11,428 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:39:11,433 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:39:11,434 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:39:11,953 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:39:11,973 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 54007 points
+2026-01-09 18:39:16,395 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 28789 vertices, 57142 faces
+2026-01-09 18:39:16,397 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:39:16,426 - detection.predictor - INFO - Detection found: remote (0.87)
+2026-01-09 18:39:16,429 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:39:16,431 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:39:16,431 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:39:16,433 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:39:16,580 - core.video_processor - INFO - Looping video...
+2026-01-09 18:39:16,993 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:39:17,015 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 54007 points
+2026-01-09 18:39:21,497 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 28216 vertices, 55909 faces
+2026-01-09 18:39:21,505 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:39:21,542 - detection.predictor - INFO - Detection found: remote (0.86)
+2026-01-09 18:39:21,543 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:39:21,545 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:39:21,546 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:39:21,549 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:39:21,915 - core.video_processor - INFO - [UI] frame=14 mesh_from=29 lag_frames=-15 mesh=yes
+2026-01-09 18:39:22,119 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:39:22,125 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 54007 points
+2026-01-09 18:39:26,443 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 24440 vertices, 48457 faces
+2026-01-09 18:39:26,451 - detection.predictor - INFO - Running analyzer prediction.
+2026-01-09 18:39:26,963 - core.video_processor - INFO - Looping video...
+2026-01-09 18:39:27,671 - detection.predictor - INFO - Detection found: remote (0.81)
+2026-01-09 18:39:27,676 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:39:27,678 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:39:27,686 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:39:27,689 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:39:28,971 - core.video_processor - INFO - [UI] frame=122 mesh_from=180 lag_frames=-58 mesh=yes
+2026-01-09 18:39:28,974 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:39:28,983 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 51937 points
+2026-01-09 18:39:35,036 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 34023 vertices, 67713 faces
+2026-01-09 18:39:35,040 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:39:35,065 - detection.predictor - INFO - Detection found: remote (0.78)
+2026-01-09 18:39:35,066 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:39:35,067 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:39:35,068 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:39:35,068 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:39:35,648 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:39:35,663 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 51937 points
+2026-01-09 18:39:40,035 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 30524 vertices, 60537 faces
+2026-01-09 18:39:40,041 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:39:40,077 - detection.predictor - INFO - Detection found: remote (0.77)
+2026-01-09 18:39:40,079 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:39:40,090 - core.video_processor - INFO - Looping video...
+2026-01-09 18:39:40,090 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:39:40,096 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:39:40,096 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:39:40,689 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:39:40,710 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 51937 points
+2026-01-09 18:39:44,724 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 40666 vertices, 80862 faces
+2026-01-09 18:39:44,728 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:39:44,782 - detection.predictor - INFO - Detection found: remote (0.71)
+2026-01-09 18:39:44,800 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:39:44,801 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:39:44,802 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:39:44,803 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:39:45,294 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:39:45,313 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 51937 points
+2026-01-09 18:39:49,715 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 37465 vertices, 74467 faces
+2026-01-09 18:39:49,732 - detection.predictor - INFO - Running analyzer prediction.
+2026-01-09 18:39:49,977 - core.video_processor - INFO - Looping video...
+2026-01-09 18:39:50,369 - detection.predictor - INFO - Detection found: remote (0.91)
+2026-01-09 18:39:50,383 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:39:50,385 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:39:50,386 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:39:50,388 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:39:50,423 - core.video_processor - INFO - [UI] frame=59 mesh_from=15 lag_frames=44 mesh=yes
+2026-01-09 18:39:50,721 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:39:50,743 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 54087 points
+2026-01-09 18:39:55,428 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 34999 vertices, 69644 faces
+2026-01-09 18:39:55,432 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:39:55,464 - detection.predictor - INFO - Detection found: remote (0.86)
+2026-01-09 18:39:55,467 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:39:55,470 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:39:55,479 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:39:55,485 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:39:56,146 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:39:56,167 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 54087 points
+2026-01-09 18:40:00,958 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 28521 vertices, 56589 faces
+2026-01-09 18:40:00,965 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:40:01,007 - detection.predictor - INFO - Detection found: remote (0.85)
+2026-01-09 18:40:01,008 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:40:01,020 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:40:01,020 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:40:01,032 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:40:01,201 - core.video_processor - INFO - Looping video...
+2026-01-09 18:40:01,559 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:40:01,569 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 54087 points
+2026-01-09 18:40:05,969 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 28436 vertices, 56367 faces
+2026-01-09 18:40:05,973 - detection.predictor - INFO - Running tracker.
+2026-01-09 18:40:06,020 - detection.predictor - INFO - Detection found: remote (0.79)
+2026-01-09 18:40:06,035 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:40:06,037 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:40:06,042 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:40:06,055 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:40:06,604 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:40:06,620 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 54087 points
+2026-01-09 18:40:10,998 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Mesh created: 26669 vertices, 52929 faces
+2026-01-09 18:40:11,006 - detection.predictor - INFO - Running analyzer prediction.
+2026-01-09 18:40:11,272 - core.video_processor - INFO - Looping video...
+2026-01-09 18:40:11,566 - detection.predictor - INFO - Detection found: remote (0.88)
+2026-01-09 18:40:11,569 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] can_handle check: label=remote, has_mask=True, mask_shape=(640, 480)
+2026-01-09 18:40:11,570 - mesh.mesh_manager - INFO - Cannot track mesh, creating new mesh using Handler.
+2026-01-09 18:40:11,572 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] process called: label=remote
+2026-01-09 18:40:11,574 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Starting depth estimation, frame shape: (640, 480, 3), mask shape: (640, 480)
+2026-01-09 18:40:12,069 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Depth estimated, shape: (640, 480)
+2026-01-09 18:40:12,086 - mesh.mesh_proccesors.sam_3d_mesh_handler - INFO - [SAM3D] Backprojected 53636 points
