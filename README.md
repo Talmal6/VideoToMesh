@@ -1,41 +1,39 @@
 # DIP2 - Mesh AR Tracker
 
-Real-time 3D mesh extraction and augmented reality tracking from video streams using a YOLO-based geometric pipeline.
+Real-time 3D mesh extraction and AR overlay using a YOLO-based pipeline. Current handlers:
+- Cylinders (bottles/cups)
+- Rectangular boxes (forced rectangle via `RectExtrudeHandler`)
 
 ## Quick Start
 
 ```bash
-python main.py yolo                # default source: ./data/remote.mp4
-python main.py yolo --source 0     # webcam
-python pipelines/yolo_pipeline.py  # run module directly
+pip install -r requirements.txt          # first time
+python main.py yolo                      # default source: ./data/remote.mp4
+python main.py yolo --source 0           # webcam
+python main.py yolo --source 0 --output ./data/output.mp4
 ```
 
-## Project Structure
+## Project Structure (key files)
 
 ```
-DIP2/
-├── main.py                      # CLI entry point (YOLO only)
-├── core/                        # Core infrastructure
-│   └── video_processor.py       # Multi-threaded video processing pipeline
-├── pipelines/
-│   └── yolo_pipeline.py         # YOLO-based geometric mesh extraction
-├── detection/                   # Object detection and tracking
-├── mesh/                        # Mesh processing and handlers
-├── helpers/
-│   └── renderer.py              # AR visualization
-└── data/                        # Test data and models
+main.py                     # CLI entry point
+core/video_processor.py     # capture -> mesh -> render pipeline
+pipelines/yolo_pipeline.py  # YOLO wiring (cylinder + rect handlers)
+detection/                  # predictor + tracker
+mesh/                       # handlers, meshes
+helpers/renderer.py         # AR visualization
 ```
 
 ## Usage (CLI)
 
 ```bash
-# YOLO pipeline with file source
+# File input with confidence override
 python main.py yolo --source ./data/remote.mp4 --conf 0.05
 
-# Treat file as realtime stream and save output
-python main.py yolo --source ./data/remote.mp4 --realtime --output ./data/output.mp4
+# Webcam with recording
+python main.py yolo --source 0 --output ./data/output.mp4
 
-# Headless mode (no display window)
+# Headless
 python main.py yolo --headless
 ```
 
@@ -44,13 +42,13 @@ python main.py yolo --headless
 ```python
 from detection.predictor import Predictor
 from mesh.mesh_proccesors.cylinder_handler import CylinderHandler
-from mesh.mesh_proccesors.box_handler import BoxHandler
+from mesh.mesh_proccesors.rect_extrude_handler import RectExtrudeHandler
 from core.video_processor import VidToMesh
 
 predictor = Predictor()
-handlers = [CylinderHandler(), BoxHandler()]
+handlers = [CylinderHandler(), RectExtrudeHandler()]
 
-processor = VidToMesh(
+app = VidToMesh(
     predictor=predictor,
     handlers=handlers,
     window_title="Mesh AR Tracker",
@@ -58,42 +56,23 @@ processor = VidToMesh(
     renderer_alpha=0.4,
 )
 
-processor.run(source="./data/remote.mp4", conf_threshold=0.3)
+app.run(source="./data/remote.mp4", conf_threshold=0.3)
 ```
 
-### Rendering Options
+## Performance Notes
 
-```python
-processor = VidToMesh(
-    predictor=predictor,
-    handlers=handlers,
-    window_title="Custom Title",
-    renderer_color=(255, 0, 0),
-    renderer_alpha=0.6,
-)
-```
-
-## Testing
-
-```bash
-python test_pipelines.py
-```
-
-## Performance
-
-| Pipeline | FPS | Quality    | Memory | Dependencies |
-|----------|-----|------------|--------|--------------|
-| YOLO     | ~30 | Geometric  | Low    | Minimal      |
+- Default handlers are CPU-friendly; higher input resolution or extra models will reduce FPS.
+- Use `--realtime` to skip file pacing; lower input resolution for faster processing.
 
 ## Troubleshooting
 
-- Low FPS: reduce input resolution, increase confidence threshold, enable GPU if available.
-- Import errors: run `pip install -r requirements.txt`.
+- Import errors: `pip install -r requirements.txt`
+- Low FPS: lower resolution, increase `--conf`, or disable output recording.
 
 ## Controls
 
-- **Q** or **ESC**: Exit the viewer.
-- Mouse interactions depend on `helpers/renderer.py` implementation.
+- **Q** or **ESC**: exit viewer
+- Mouse interactions depend on `helpers/renderer.py`
 
 ## License
 

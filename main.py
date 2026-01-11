@@ -55,7 +55,7 @@ Examples:
     
     args = parser.parse_args()
 
-    source = args.source if args.source is not None else "./data/remote.mp4"
+    source = args.source if args.source is not None else "./data/box_vid.mp4"
     conf = args.conf if args.conf is not None else 0.05
 
     if args.pipeline == "yolo":

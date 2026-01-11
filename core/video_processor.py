@@ -242,6 +242,7 @@ class VidToMesh:
             logger.info("Headless mode: display disabled")
 
         writer = None
+        last_write_t = None
 
         try:
             while not self._stop.is_set():
@@ -266,7 +267,18 @@ class VidToMesh:
                         writer = None
 
                 if writer is not None:
-                    writer.write(vis_frame)
+                    # Maintain real-time pacing in the recorded file by duplicating frames
+                    # based on wall-clock delta between writes. This avoids fast/slow jumps
+                    # when processing is variable.
+                    if last_write_t is None:
+                        frames_to_write = 1
+                    else:
+                        dt = max(0.0, frame_pkt.t_wall - last_write_t)
+                        frames_to_write = max(1, int(round(dt * output_fps)))
+
+                    for _ in range(frames_to_write):
+                        writer.write(vis_frame)
+                    last_write_t = frame_pkt.t_wall
 
                 if show:
                     cv2.imshow(self._win_main, vis_frame)

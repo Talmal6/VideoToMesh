@@ -1,7 +1,6 @@
 """YOLO-based mesh extraction pipeline using geometric primitives."""
 
 import sys
-import os
 from pathlib import Path
 
 # Add parent directory to path for direct execution
@@ -15,7 +14,7 @@ import argparse
 
 from detection.predictor import Predictor
 from mesh.mesh_proccesors.cylinder_handler import CylinderHandler
-from mesh.mesh_proccesors.box_handler import BoxHandler
+from mesh.mesh_proccesors.rect_extrude_handler import RectExtrudeHandler
 from core.video_processor import VidToMesh
 from pipelines.yolo_config import SHAPE_CONFIG
 
@@ -44,7 +43,7 @@ def main(
     # Initialize handlers with specific target classes from config
     handlers = [
         CylinderHandler(labels=SHAPE_CONFIG['cylinder']),
-        BoxHandler(labels=SHAPE_CONFIG['box'])
+        RectExtrudeHandler(labels=SHAPE_CONFIG['box'])
     ]
     
     app = VidToMesh(
@@ -68,7 +67,7 @@ def main(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="YOLO Mesh Pipeline")
-    parser.add_argument("--source", default="./data/remote.mp4", help="Video source path or camera index")
+    parser.add_argument("--source", default="0", help="Video source path or camera index")
     parser.add_argument("--conf", type=float, default=0.05, help="Confidence threshold (0.0-1.0)")
     parser.add_argument("--realtime", action="store_true", help="Treat file input like realtime stream")
     parser.add_argument("--output", default="./data/outputs/output.mp4", help="Output video file path for rendered frames")

@@ -2,7 +2,7 @@
 import cv2
 import numpy as np
 from typing import Optional, Tuple
-from mesh.mesh_shapes.mesh_object import MeshObject
+from mesh.mesh_shapes.mesh_object import MeshObject, Pose
 
 
 class Renderer:
@@ -29,6 +29,7 @@ class Renderer:
         max_faces_to_draw: int = 1500,
         preview_every: int = 6,
         drag_sensitivity: float = 0.01,  # radians per pixel
+        draw_rotation_indicator: bool = False,  # hide red arrow by default
     ):
         # Visual config
         self.base_color = base_color
@@ -53,6 +54,7 @@ class Renderer:
         self._mouse_last_x = 0
         self._mouse_last_y = 0
         self._drag_sensitivity = float(drag_sensitivity)
+        self._show_rotation_indicator = bool(draw_rotation_indicator)
 
     # ---------------------------------------------------------------------
     # Public: attach mouse interaction to a cv2 window
@@ -114,7 +116,8 @@ class Renderer:
             out = self._blend_where(out, mask_layer, mask_bool, self.mask_alpha)
 
         # 5) Draw rotation indicator arrow on bbox (optional)
-        out = self._draw_rotation_indicator(out, mesh_object)
+        if self._show_rotation_indicator:
+            out = self._draw_rotation_indicator(out, mesh_object)
 
         # 6) Preview (cached, unless dragging -> refresh every frame)
         self._preview_counter += 1
@@ -273,17 +276,22 @@ class Renderer:
         if getattr(mesh, "bbox_xyxy", None) is None:
             return frame
 
+        # Ensure pose exists to avoid runtime errors when rotation is missing
+        if not hasattr(mesh, "pose") or mesh.pose is None:
+            mesh.pose = Pose()
+
         x1, y1, x2, y2 = mesh.bbox_xyxy
         cx = int((x1 + x2) / 2)
         cy = int((y1 + y2) / 2)
         radius = max(1, int((x2 - x1) / 2))
 
         angle = 0.0
-        if hasattr(mesh, "pose") and hasattr(mesh.pose, "rotation"):
-            try:
-                angle = float(mesh.pose.rotation[2])  # Z rotation
-            except Exception:
-                angle = 0.0
+        try:
+            rot = getattr(mesh.pose, "rotation", None)
+            if rot is not None and len(rot) >= 3:
+                angle = float(rot[2])
+        except Exception:
+            angle = 0.0
 
         arrow_len = int(radius * 1.2)
         end_x = int(cx + arrow_len * np.cos(angle - np.pi / 2))
