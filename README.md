@@ -74,6 +74,5 @@ app.run(source="./data/remote.mp4", conf_threshold=0.3)
 - **Q** or **ESC**: exit viewer
 - Mouse interactions depend on `helpers/renderer.py`
 
-## License
 
-[Your License Here]
+
