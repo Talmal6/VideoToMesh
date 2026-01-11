@@ -12,16 +12,14 @@ def main():
         epilog="""
 Examples:
   %(prog)s yolo                    Run YOLO pipeline with default settings
-  %(prog)s sam3d                   Run SAM3D pipeline with default settings
   %(prog)s yolo --source 0         Use webcam for YOLO pipeline
-  %(prog)s sam3d --conf 0.3        Use custom confidence threshold
-        """
+"""
     )
     
     parser.add_argument(
         "pipeline",
-        choices=["yolo", "sam3d"],
-        help="Pipeline to run: 'yolo' for geometric primitives, 'sam3d' for depth-based meshes"
+        choices=["yolo"],
+        help="Pipeline to run: 'yolo' for geometric primitives"
     )
     
     parser.add_argument(
@@ -63,15 +61,6 @@ Examples:
     if args.pipeline == "yolo":
         from pipelines.yolo_pipeline import main as yolo_main
         yolo_main(
-            source=source,
-            conf_threshold=conf,
-            realtime=args.realtime,
-            output_path=args.output,
-            show=not args.headless
-        )
-    elif args.pipeline == "sam3d":
-        from pipelines.sam3d_pipeline import main as sam3d_main
-        sam3d_main(
             source=source,
             conf_threshold=conf,
             realtime=args.realtime,

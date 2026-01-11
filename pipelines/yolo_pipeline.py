@@ -71,7 +71,7 @@ if __name__ == "__main__":
     parser.add_argument("--source", default="./data/remote.mp4", help="Video source path or camera index")
     parser.add_argument("--conf", type=float, default=0.05, help="Confidence threshold (0.0-1.0)")
     parser.add_argument("--realtime", action="store_true", help="Treat file input like realtime stream")
-    parser.add_argument("--output", default=None, help="Output video file path for rendered frames")
+    parser.add_argument("--output", default="./data/outputs/output.mp4", help="Output video file path for rendered frames")
     parser.add_argument("--headless", action="store_true", help="Disable display window (headless mode)")
     args = parser.parse_args()
 

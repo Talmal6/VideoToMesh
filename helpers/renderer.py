@@ -203,6 +203,19 @@ class Renderer:
         step = int(np.ceil(F / self.max_faces_to_draw))
         return faces[::step]
 
+    def _sort_faces_by_depth(self, faces: np.ndarray, z_values: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        Painter's algorithm: draw far faces first so nearer triangles are not overdrawn by the back.
+        Returns faces and their sorted average depths (both sorted far->near).
+        """
+        faces_arr = np.asarray(faces, dtype=np.int32)
+        if faces_arr.size == 0:
+            return faces_arr, np.zeros((0,), dtype=np.float32)
+
+        face_depths = z_values[faces_arr].mean(axis=1)
+        order = np.argsort(face_depths)[::-1]  # far -> near
+        return faces_arr[order], face_depths[order]
+
     def _draw_mesh_layer(self, frame_shape: Tuple[int, int, int], mesh: MeshObject) -> Tuple[np.ndarray, np.ndarray]:
         """
         Draw mesh into an offscreen layer (opaque) and a mask of where it drew.
@@ -226,6 +239,10 @@ class Renderer:
         depth_range = (z_max - z_min) if (z_max - z_min) != 0 else 1.0
 
         faces = self._sample_faces(faces_all)
+        faces, face_depths = self._sort_faces_by_depth(faces, z_values)
+        if faces.size == 0:
+            return mesh_layer, mesh_mask
+
         tris_2d = points_2d[faces]  # (F',3,2)
 
         for face_idx, face in enumerate(faces):
@@ -233,7 +250,7 @@ class Renderer:
 
             stripe_color = self.base_color if ((face_idx // 2) % 2 == 0) else self.highlight_color
 
-            avg_depth = float(np.mean(z_values[face]))
+            avg_depth = float(face_depths[face_idx])
             depth_norm = (avg_depth - z_min) / depth_range
             shade = 0.6 + 0.4 * (1.0 - depth_norm)
 
@@ -306,13 +323,17 @@ class Renderer:
         depth_range = (z_max - z_min) if (z_max - z_min) != 0 else 1.0
 
         canvas = np.ones((size[1], size[0], 3), dtype=np.uint8) * 245
-        tris = pts_scaled[mesh.faces]
+        faces_sorted, face_depths = self._sort_faces_by_depth(mesh.faces, rz)
+        if faces_sorted.size == 0:
+            return None
 
-        for face_idx, face in enumerate(mesh.faces):
+        tris = pts_scaled[faces_sorted]
+
+        for face_idx, face in enumerate(faces_sorted):
             tri_pts = tris[face_idx].astype(np.int32)
             stripe_color = self.base_color if ((face_idx // 2) % 2 == 0) else self.highlight_color
 
-            avg_depth = float(np.mean(rz[face]))
+            avg_depth = float(face_depths[face_idx])
             depth_norm = (avg_depth - z_min) / depth_range
             shade = 0.6 + 0.4 * (1.0 - depth_norm)
             shaded_color = tuple(int(c * shade) for c in stripe_color)
@@ -393,4 +414,3 @@ class Renderer:
 
             self._mouse_last_x = x
             self._mouse_last_y = y
-
